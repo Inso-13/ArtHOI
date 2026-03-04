@@ -1,0 +1,270 @@
+# Unified configuration file - integrating all hyperparameters
+# This configuration file contains all hyperparameters for training, models, data, loss functions, etc.
+
+scene: "open-cabinet"  # Scene name
+exp_name: "arthoi"     # Experiment name
+
+# Experiment configuration
+experiment:
+  is_continue: false     # Whether to continue training
+  iterations: 200       # Base iteration count
+  stage1_iterations: 200 # Stage 1 iteration count
+  stage2_iterations: 1000 # Stage 2 iteration count (iterations * 5)
+
+# Model configuration
+model:
+  # SMPLX model parameters
+  smplx:
+    gender: "male"                    # Gender
+    shape_param_dim: 10              # Shape parameter dimension
+    expr_param_dim: 50               # Expression parameter dimension
+    vertex_num: 10475               # Vertex count
+    joint_num: 55                   # Joint count
+    
+  # Human Gaussian model
+  human_gaussian:
+    gender: "male"
+    
+  # Renderer configuration
+  renderer:
+    scale_modifier: 1.0              # Scale modifier
+
+# Optimizer configuration
+optimizer:
+  # Learning rate configuration
+  learning_rates:
+    R_emc: 0.0001
+    T_emc: 0.0001
+    body_pose: 0.00001
+    lhand_pose: 0.0
+    rhand_pose: 0.0
+    jaw_pose: 0.0001
+    betas: 0.0001
+    object_R: 0.0001
+    object_T: 0.0001
+    color_object_features_dc: 0.0
+    color_object_features_rest: 0.000125  # 0.0025 / 20
+    
+  # Dynamic learning rate adjustment
+  dynamic_lr:
+    # Learning rate when updating human parameters
+    human_update:
+      R_emc: 0.0001
+      T_emc: 0.0001
+      body_pose: 0.001
+      lhand_pose: 0.0
+      rhand_pose: 0.0
+      jaw_pose: 0.0
+      betas: 0.0
+      
+    # Learning rate when updating object parameters
+    object_update:
+      object_R: 0.0001
+      object_T: 0.0001
+      
+    # Learning rate when updates are disabled
+    off_update:
+      R_emc: 0.0
+      T_emc: 0.0
+      body_pose: 0.0
+      lhand_pose: 0.0
+      rhand_pose: 0.0
+      jaw_pose: 0.0
+      betas: 0.0
+      object_R: 0.0
+      object_T: 0.0
+
+# Loss function weight configuration
+loss_weights:
+  # Stage 1 loss weights
+  stage1:
+    l1: 1.0
+    l1_object: 5.0
+    object_mask: 1.0
+    track_2d: 2.0
+    object_axis: 0.05
+    
+  # Stage 2 loss weights
+  stage2:
+    l1: 1.0
+    human_mask: 1.0
+    human_smooth: 1000.0  # 100.0 * 10 * 10
+    human_frame0: 100.0
+    human_3dkpt: 10000.0
+    human_initpose: 1.0
+    foot_sliding: 10.0
+    collision: 100000.0  # 1e5
+
+# 数据配置
+data:
+  # 路径配置
+  paths:
+    results_root: "../results"
+    data_root: "../data"
+    assets_root: "../assets"
+    sam_ckpt_path: "../assets/sam_vit_h_4b8939.pth"
+    
+  # 图像配置
+  image:
+    width: 1024
+    height: 1024
+    resize: true
+    
+  # 相机配置
+  camera:
+    focal_length: 3000
+    znear: 0.01
+    zfar: 100.0
+    
+  # 缩放修饰符
+  scale_modifiers:
+    human: 1.0
+    object: 1.0
+    scene: 1.0
+    
+  # Complete path configuration - dynamically generated based on scene name
+  scene_paths:
+    # These paths will be dynamically constructed at runtime based on scene name
+    root_path: "{data_root}/{scene}"
+    align_json: "{data_root}/{scene}/init_params/align.json"
+    
+    # Gaussian file paths
+    human_gs_cano: "{data_root}/{scene}/init_gaussians/human_cano.ply"
+    human_gs: "{data_root}/{scene}/init_gaussians/human.ply"
+    object_ply: "{data_root}/{scene}/init_gaussians/object.ply"
+    scene_ply: "{data_root}/{scene}/init_gaussians/scene.ply"
+    
+    # Data file paths
+    smplx_init_json: "{data_root}/{scene}/init_params/smplx.json"
+    hamer_init_json: "{data_root}/{scene}/init_params/hamer.json"
+    camera_json: "{data_root}/{scene}/init_params/camera.json"
+    
+    # Prior data paths
+    gvhmr_init_json: "{data_root}/{scene}/priors/hmr4d_results.pt"
+    image_root: "{data_root}/{scene}/priors/images"
+    human_mask: "{data_root}/{scene}/priors/human_masks"
+    object_mask: "{data_root}/{scene}/priors/object_masks"
+    track2d_root: "{data_root}/{scene}/priors/cotracker"
+
+# Training configuration
+training:
+  # Frame configuration
+  scene_start_frame_id: 0
+  train_start_frame_id: 0
+  
+  # Contact detection configuration
+  contact:
+    human_2dkpt_threshold: 0.6
+    contact_mask_n: 8  # Contact mask kernel size
+    
+  # Smooth loss configuration
+  smooth_loss:
+    keys: ['R_emc', 'T_emc', 'body_pose', 'jaw_pose', 'lhand_pose', 'rhand_pose']
+    weights: [1, 1, 1, 1, 1, 1]
+    
+  # Collision detection configuration
+  collision:
+    enable_after_iter_ratio: 0.5  # Enable collision detection in the second half of training
+    
+  # Debug configuration
+  debug:
+    save_ply: true
+    save_images: true
+    log_interval: 20  # Log every 20 iterations
+
+# Model parameter initialization configuration
+model_init:
+  # Object parameter initialization
+  object:
+    R_init: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0]  # 6D rotation representation
+    T_init: [0.0, 0.0, 0.0]  # Translation
+    W_init: -10.0  # Weight initialization
+    
+  # Human parameter initialization
+  human:
+    gender: "male"
+    
+# Rendering configuration
+rendering:
+  # Gaussian rendering parameters
+  gaussian:
+    scale_modifier: 1.0
+    bg_color: [1.0, 1.0, 1.0]  # Background color
+    
+  # Debug visualization
+  debug:
+    ratio: 0.3  # Debug image scale ratio
+    save_paths:
+      starts: "../results/{ID}/{exp_name}/starts/{frame_id:04d}.png"
+      stage1_ends: "../results/{ID}/{exp_name}/stage1_ends/{frame_id:04d}.png"
+      renders: "../results/{ID}/{exp_name}/renders/{frame_id:04d}.png"
+
+# File path configuration
+file_paths:
+  # Data files
+  data:
+    align_json: "init_params/align.json"
+    smplx_json: "init_params/smplx.json"
+    hamer_json: "init_params/hamer.json"
+    frame0_json: "init_params/camera.json"
+    
+  # Gaussian files
+  gaussians:
+    human_cano: "init_gaussians/human_cano.ply"
+    human: "init_gaussians/human.ply"
+    object: "init_gaussians/object.ply"
+    scene: "init_gaussians/scene.ply"
+    
+  # Prior data
+  priors:
+    images: "priors/images"
+    human_masks: "priors/human_masks"
+    object_masks: "priors/object_masks"
+    track2d: "priors/cotracker"
+    gvhmr_results: "priors/hmr4d_results.pt"
+    
+  # Results saving
+  results:
+    params_stage1: "params/stage1/{frame_id:04d}.pth"
+    params_stage2: "params/stage2.pth"
+
+# SAGS (Segment Anything Gaussian Splatting) configuration
+sags:
+  # Sampling parameters
+  num_samples: 10
+  
+  # KNN search parameters
+  knn:
+    K: 400
+    r: 4
+    
+  # Influence threshold
+  influence_threshold: 0.1
+  
+  # Motion analysis parameters
+  motion:
+    quantile_threshold: 0.1
+    min_motion_threshold: 1.0
+    
+  # Quasi-static pairs parameters
+  quasi_static:
+    search_k: 100
+    search_r: 1
+    n_pairs: 20
+    pair_distance: 0.05
+    
+  # Visualization parameters
+  visualization:
+    point_radius: 5
+    line_thickness: 1
+    circle_radius: 2
+    alpha: 0.5
+    
+  # Morphology parameters
+  morphology:
+    kernel_size: 15
+    
+  # Clustering parameters
+  clustering:
+    dynamic_max_clusters: 4
+    static_max_clusters: 20

@@ -1,0 +1,11 @@
+/data
+/results
+/assets
+/.vscode
+
+**/__pycache__/
+*.ply
+*.obj
+*.png
+*.log
+*.npy
