@@ -24,8 +24,8 @@
 </div>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/xxxx.xxxxx" target='_blank'>
-    <img src="http://img.shields.io/badge/cs.CV-arXiv%3Axxxx.xxxxx-B31B1B.svg" alt="ArXiv">
+  <a href="https://arxiv.org/abs/2603.04338" target='_blank'>
+    <img src="http://img.shields.io/badge/cs.CV-arXiv%3A2603.04338-B31B1B.svg" alt="ArXiv">
   </a>
   <a href="https://arthoi.github.io/" target='_blank'>
     <img src="https://img.shields.io/badge/Project Page-%F0%9F%93%9a-lightblue" alt="Project Page">
@@ -129,10 +129,10 @@ data/
 If you find our work useful for your research, please cite our paper.
 
 ```
-  @inproceedings{huang2026arthoi,
+  @article{huang2026arthoi,
     title={ArtHOI: Articulated Human-Object Interaction Synthesis by 4D Reconstruction from Video Priors},
     author={Huang, Zihao and Liu, Tianqi and Chen, Zhaoxi and Xu, Shaocong and Zhang, Saining and Xiao, Lixing and Cao, Zhiguo and Li, Wei and Zhao, Hao and Liu, Ziwei},
-    booktitle={arXiv preprint arXiv:xxxx.xxxxx},
+    journal={arXiv preprint arXiv:2603.04338},
     year={2026}
   }
 ```
