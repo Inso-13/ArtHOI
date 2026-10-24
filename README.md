@@ -1,5 +1,5 @@
 <h2 align="center" width="100%">
-[ArXiv'26] ArtHOI: Articulated Human-Object Interaction Synthesis by 4D Reconstruction from Video Priors
+[TPAMI 2026] ArtHOI: Articulated Human-Object Interaction Synthesis by 4D Reconstruction from Video Priors
 </h2>
 <div>
 <div align="center">
@@ -39,6 +39,8 @@
 </p>
 
 >**TL;DR**: <em>ArtHOI enables zero-shot synthesis of realistic human interactions with articulated objects.</em>
+
+**2026-10-23:** Accepted to IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI).
 
 ## 🔨 Environments
 ```bash
@@ -126,6 +128,8 @@ data/
 
 
 ## 📝 Citation
+Accepted to IEEE TPAMI in October 2026. The arXiv citation below will be updated when the IEEE publication record is available.
+
 If you find our work useful for your research, please cite our paper.
 
 ```
